@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Initialize a long-term learning workspace for english-input-coach."""
+"""Initialize a long-term learning workspace for input-driven-language-coach."""
 
 from __future__ import annotations
 

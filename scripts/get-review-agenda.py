@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Summarize review pressure for english-input-coach."""
+"""Summarize review pressure for input-driven-language-coach."""
 
 from __future__ import annotations
 

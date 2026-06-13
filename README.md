@@ -1,19 +1,21 @@
-# english-input-coach
+# input-driven-language-coach
 
-一个把真实语言输入转成结构化学习环节的 agent skill。
+这是一个我拿来实验“能不能围绕自己真实在看的内容学语言”的 agent skill。
 
-它不是背单词软件，不是课程平台，也不是一套大而全的语言学习系统。它更像一份交给 agent 的工作说明书：当学习者已经看过、听过、读过一份英文材料后，agent 不要只做摘要和查词，而要基于这份真实输入带他学、带他练、接住错误，并把这轮学习状态留下来，供后续复习继续使用。
+我不太想把学语言这件事做成那种很难受的流程，比如硬换教材、硬背词表、或者看了很多输入最后还是只停在“我大概看懂了”。我更想要的是：我平时本来就在看的视频、字幕、文章，能不能直接变成一轮可讲解、可练习、可纠错、可复习的学习流程。
+
+所以这个 skill 本质上不是背单词软件，也不是课程平台。它更像一份交给 agent 的工作说明书：当学习者已经看过、听过、读过一份英文材料后，agent 不要只做摘要和查词，而要基于这份真实输入带他学、带他练、接住错误，并把这轮学习状态留下来，供后续复习继续使用。
 
 ## 为什么做这个
 
-这个项目来自一个很实际的需求：
+这个项目基本就是从我自己的使用需求里长出来的：
 
-- 输入材料最好来自自己本来就会看的内容，而不是硬换成教材
-- 学习过程不能只停在“看懂了”，还得能被组织成可练、可纠错、可复习的环节
-- 很多输入材料都带强语境，尤其是直播闲聊字幕；如果切得太碎，后面的讲解和输出就会失真
-- 如果长期使用，agent 需要记得你之前学过什么、哪里老出错、哪些东西值得复习
+- 我希望输入材料最好来自自己本来就会看的内容，而不是为了学习硬切去另一套材料
+- 我不想只积累“看懂过”的感觉，我想把输入真的变成能练、能纠错、能反复回来的东西
+- 很多材料本身语境很强，尤其是直播闲聊字幕；如果切得太碎，后面的讲解和输出会直接失真
+- 如果真要长期用，agent 就不能每次都当失忆重开，它得记得我之前学过什么、哪里老出错、哪些东西值得回头复习
 
-所以这个 skill 的目标不是替代老师，而是把一部分“备课、组织材料、设计练习、纠错、总结本轮能力变化”的工作交给 agent。
+所以这个 skill 的目标不是替代老师，而是把一部分“备课、整理材料、设计练习、纠错、总结这轮暴露出的能力问题”的工作交给 agent。
 
 ## 适合谁
 
@@ -141,7 +143,7 @@ yt-dlp --write-subs --write-auto-subs --sub-langs en --skip-download <video-url>
 ### 1. 一次性 lesson
 
 ```text
-Use the english-input-coach skill.
+Use the input-driven-language-coach skill.
 
 input_type: transcript
 track: live_chat
@@ -156,7 +158,7 @@ text:
 ### 2. 长期工作区模式
 
 ```text
-Use the english-input-coach skill.
+Use the input-driven-language-coach skill.
 
 learning_root: /path/to/learning-root
 input_type: transcript
@@ -172,67 +174,13 @@ text:
 ### 3. 做完练习后继续纠错
 
 ```text
-Use the english-input-coach skill.
+Use the input-driven-language-coach skill.
 
 这是我对上一轮 rewrite 和 contextual output 的回答：
 [粘贴回答]
 
 请直接纠错，并更新 Profile Delta + Review Candidates。
 ```
-
-## 脚本层当前已经验证到哪一步
-
-这份仓库目前还是草稿，但脚本层已经做过一轮本地自测。2026-06-13 在本地临时工作区里实际跑通过：
-
-- `init-learning-root.py`
-  - 能初始化 `learning_root`
-  - 能创建 `.language-coach/`、`languages/` 和 `state.db`
-- `write-sqlite-event.py`
-  - 能按受控 JSON 操作写入 `sources`、`segments`、`sessions`、`review_items`、`profile_events`
-- `rebuild-profile-snapshot.py`
-  - 能从 `state.db` 重建 `learner_profile.json`
-- `get-review-agenda.py`
-  - 能按 `summary_first` 输出复习摘要
-  - 能基于当前复习压力给出 `recommended_mode`
-- `write-json-state.py`
-  - 能安全覆写 JSON 文件
-  - 覆写前会生成 `.bak`
-- `migrate-learning-root.py`
-  - 已做过基础迁移校验
-
-这轮实际自测里，`get-review-agenda.py` 已经返回过类似结果：
-
-```json
-{
-  "language": "en",
-  "days_since_last_session": 0,
-  "overdue_items": 1,
-  "due_soon_items": 0,
-  "focus_groups": [
-    {
-      "review_category": "live_chat_chunks",
-      "count": 1,
-      "max_priority": 9.5
-    }
-  ],
-  "display_mode": "summary_first",
-  "recommended_mode": "mixed"
-}
-```
-
-这说明“长期工作区初始化 -> 写入状态 -> 重建画像 -> 拉取复习摘要”这条链路现在是能跑起来的。
-
-## 一个真实的脚本调用样例
-
-下面是当前 CLI 风格，不是伪代码：
-
-```bash
-python skills/english-input-coach/scripts/init-learning-root.py /path/to/learning-root
-python skills/english-input-coach/scripts/get-review-agenda.py /path/to/learning-root/.language-coach/state.db --language en
-```
-
-`write-sqlite-event.py` 当前接收的是 JSON payload，不是 `--table` 这种参数式接口。也就是说，如果你以后要在 README 或别的文档里给示例，应该写成“传 JSON 操作”，而不是把它描述成 ORM 风格命令。
-
 ## 已验证，不等于已完全证明
 
 当前可以说“已验证”的是：
@@ -249,24 +197,13 @@ python skills/english-input-coach/scripts/get-review-agenda.py /path/to/learning
 - 不同 agent 宿主都会稳定按同一方式执行这套 skill
 - 多轮长期使用后的画像质量一定可靠
 
-更准确的说法是：这是一份已经有脚本骨架、能跑通核心状态链路，但教学效果仍在持续验证中的 v1 草稿。
-
 ## 设计边界
-
-当前状态层更偏向：
 
 - 单学习者
 - 本地或单 sandbox 使用
 - agent 自动写入
 - 中等切分
 - 摘要优先的复习模式
-
-暂时不适合直接拿来做：
-
-- 多人同时写同一个数据库
-- 远程共享数据库文件上的高并发协作
-- 复杂多用户权限系统
-
 ## 外部依据
 
 这份 skill 不是“论文实现版”，但它确实有外部依据来约束结构，不是纯拍脑袋。
@@ -291,26 +228,10 @@ python skills/english-input-coach/scripts/get-review-agenda.py /path/to/learning
 
 这个选择更偏向“本地应用 / 单工作区文件数据库”，而不是“很多客户端同时直连写一个远程数据库文件”。
 
-## 当前状态
-
-**这仍然是草稿版本。**
-
-它已经适合：
-
-- 自己边用边改
-- 公开到 GitHub 供别人理解思路和试用
-- 继续围绕真实输入材料迭代清洗、切分、lesson 和 review 逻辑
-
-它还不适合：
-
-- 对外声称“已经充分测试”
-- 对所有类型英文输入都稳定有效
-- 直接当成成熟通用产品来承诺体验
-
 ## 仓库结构
 
 ```text
-english-input-coach/
+input-driven-language-coach/
 |-- SKILL.md
 |-- README.md
 |-- agents/

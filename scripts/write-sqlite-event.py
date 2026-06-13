@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apply controlled SQLite state changes for english-input-coach."""
+"""Apply controlled SQLite state changes for input-driven-language-coach."""
 
 from __future__ import annotations
 

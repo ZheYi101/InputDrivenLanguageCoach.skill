@@ -1,6 +1,6 @@
 # Input Contract
 
-This skill starts after the learner already has English text.
+This skill starts after the learner already has target-language text.
 
 ## Required fields
 

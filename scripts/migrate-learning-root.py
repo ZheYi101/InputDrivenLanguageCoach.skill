@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Repair or migrate an english-input-coach learning root to the current schema."""
+"""Repair or migrate an input-driven-language-coach learning root to the current schema."""
 
 from __future__ import annotations
 

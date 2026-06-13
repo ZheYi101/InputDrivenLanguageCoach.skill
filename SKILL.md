@@ -1,19 +1,20 @@
 ---
-name: english-input-coach
+name: input-driven-language-coach
 description: |
-  Use when the user already has English input materials as text, such as video transcripts,
-  subtitles, or articles, and wants Codex to turn them into structured learning sessions.
+  Use when the user already has target-language input materials as text, such as video
+  transcripts, subtitles, or articles, and wants Codex to turn them into structured learning
+  sessions.
   Best for Chinese-speaking learners who want lessons driven by their real input instead of
   generic textbook content. Supports two explicit tracks in v1: live_chat for conversational
   transcripts and article_reading for continuous written text. Also use when the user wants
   corrections on their exercise answers from a prior lesson generated from the same input.
 ---
 
-# English Input Coach
+# Input-Driven Language Coach
 
 把学习者已经接触过的英文输入，变成一轮可执行、可纠错、可沉淀的学习闭环。
 
-This skill converts English input that the learner already consumed into a teachable loop:
+This skill converts target-language input that the learner already consumed into a teachable loop:
 
 1. Anchor the scene and intention of the input
 2. Highlight high-value chunks or vocabulary
@@ -42,7 +43,7 @@ Use this table before doing anything substantial.
 
 Use this skill when:
 
-- The user provides English text from a transcript, subtitle file, or article
+- The user provides target-language text from a transcript, subtitle file, or article
 - The user wants to learn from their own input instead of generic material
 - The user wants contextualized vocabulary/chunk practice
 - The user sends answers to exercises and wants correction plus next-step guidance

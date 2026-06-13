@@ -1,6 +1,6 @@
 # State Schema
 
-This reference defines the long-term learning workspace for `english-input-coach`.
+This reference defines the long-term learning workspace for `input-driven-language-coach`.
 
 Use it whenever:
 

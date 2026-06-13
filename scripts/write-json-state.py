@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Safely write a JSON state file for english-input-coach."""
+"""Safely write a JSON state file for input-driven-language-coach."""
 
 from __future__ import annotations
 
