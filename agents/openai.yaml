@@ -1,0 +1,4 @@
+interface:
+  display_name: "Input-Driven Language Coach"
+  short_description: "Turn real language input into structured lessons, corrections, and lightweight profile updates"
+  default_prompt: "Use this skill when the user already has language input as text, such as transcripts, subtitles, or articles, and wants an agent to turn that real input into a structured learning session with contextual practice and follow-up correction."
