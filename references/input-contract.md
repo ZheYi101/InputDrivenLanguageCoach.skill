@@ -23,6 +23,10 @@ This skill starts after the learner already has target-language text.
   - Suggested: `subtitle_transcript`, `spoken_transcript`, `article`
 - `learning_root`
   - Required for persistent workspace mode
+- `source_path`
+  - Local `.srt` or `.vtt` file path when the task is to ingest or clean before teaching
+- `source_manifest`
+  - A manifest file listing ordered local subtitle paths for batch import
 
 ## v1 rules
 
@@ -41,18 +45,33 @@ For `transcript` input, treat normalization as mandatory when the text still con
 - time ranges
 - broken line wraps from one sentence
 - duplicate lines
+- rolling-caption overlap from raw `.vtt`
 - obvious ASR noise or subtitle junk
 
 Do not build a lesson directly from this raw form if it can be cleaned first.
+
+## Ingestion-first exception
+
+If the user is explicitly asking to import or batch-clean local subtitle material into a persistent workspace, `text` may be absent at the start only when one of these is provided:
+
+- `source_path`
+- `source_manifest`
+
+In that case:
+
+1. read `references/subtitle-ingestion.md`
+2. clean and segment the material first
+3. store the cleaned result in the workspace
+4. build the lesson from the cleaned text or a stored segment
 
 ## Suggested normalized input shape
 
 ```json
 {
   "input_type": "transcript",
-  "track": "live_chat",
+  "track": "article_reading",
   "material_type": "subtitle_transcript",
-  "title": "Dual-stream opening segment",
+  "title": "Napoleon in Italy: Battle of Rivoli",
   "text": "Cleaned transcript text or a cleaned selected excerpt",
   "learner_language": "zh-CN",
   "source_url": "https://example.com/video",

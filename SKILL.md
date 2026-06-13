@@ -12,8 +12,6 @@ description: |
 
 # Input-Driven Language Coach
 
-把学习者已经接触过的英文输入，变成一轮可执行、可纠错、可沉淀的学习闭环。
-
 This skill converts target-language input that the learner already consumed into a teachable loop:
 
 1. Anchor the scene and intention of the input
@@ -30,10 +28,11 @@ Use this table before doing anything substantial.
 | --- | --- |
 | Validate minimum fields or decide whether the input is in scope | `references/input-contract.md` |
 | A persistent `learning_root` exists or any long-term state will be read or written | `references/state-schema.md` |
-| The input is raw `.srt`, subtitle text, transcript dump, or noisy copied text | `references/text-normalization.md` |
+| The input is raw `.srt`, raw `.vtt`, raw `.ass/.ssa`, subtitle text, transcript dump, or noisy copied text | `references/text-normalization.md` |
+| The user wants to clean or batch-import subtitle files into a workspace | `references/subtitle-ingestion.md` |
 | Cleaned material must be cut into teachable units | `references/segmentation-policy.md` |
 | Build a lesson for a transcript, stream, subtitle, or casual spoken excerpt | `references/track-live-chat.md` |
-| Build a lesson for an article, essay, blog post, or continuous written passage | `references/track-article-reading.md` |
+| Build a lesson for an article, essay, blog post, documentary narration, or continuous written passage | `references/track-article-reading.md` |
 | The user comes back to study or review from a persistent workspace | `references/review-policy.md` |
 | Correct learner answers and update the learning snapshot | `references/profile-schema.md` |
 | Audit whether the lesson structure is grounded in the intended pedagogy | `references/pedagogy.md` |
@@ -51,6 +50,7 @@ Use this skill when:
 Do not use this skill for:
 
 - Subtitle downloading, OCR, or ASR
+- Protected subtitle retrieval that would require account login or browser cookies
 - Beginner language instruction from zero
 - General proofreading unrelated to an input passage
 - Technical explainers as a separate track in v1
@@ -74,6 +74,8 @@ Optional fields:
 - `watched_or_read` default `true`
 - `material_type`
 - `learning_root`
+- `source_path`
+- `source_manifest`
 
 If `track` is missing, ask the user to choose. Do not auto-classify in v1.
 
@@ -102,9 +104,16 @@ Use this mode when the user first sends raw material and wants it stored for lat
 1. Validate the input contract.
 2. If `learning_root` is missing, ask for it or stay in one-off mode.
 3. Read `references/state-schema.md`.
-4. Write the raw material into the workspace and register it in the DB.
-5. If the input is raw or noisy, normalize it before anything else.
-6. Store the cleaned result and segment metadata for future sessions.
+4. If the source is a local subtitle file, subtitle directory, or ordered batch, read `references/subtitle-ingestion.md`.
+5. If the input is raw or noisy, run a mechanical normalization pass before anything else.
+6. If the source is subtitle-based, prefer the staged pipeline:
+   - `normalize-subtitle-transcript.js`
+   - `render-lesson-ready-transcript.js`
+   - `ingest-subtitle-into-learning-root.js`
+7. Write the raw material into the workspace and register it in the DB.
+8. Store the cleaned result and segment metadata for future sessions.
+
+Prefer the bundled subtitle scripts for repeatable `.srt`/`.vtt` cleaning and import work instead of rewriting the same logic ad hoc.
 
 ### Mode B: Build a lesson from input or from a stored segment
 
@@ -129,6 +138,8 @@ Use this mode when the user first sends raw material and wants it stored for lat
    - review items
    - profile events
 9. Keep explanations concise and actionable. The goal is a session the learner can actually do.
+
+For subtitle-based historical or documentary videos, the source may still belong to `article_reading` if the cleaned material behaves like continuous exposition rather than chat.
 
 ### Mode C: Review learner answers from a prior lesson
 
@@ -208,8 +219,9 @@ Output only the current learning delta, not a full permanent profile.
 
 ## Track-specific references
 
+- Read [references/subtitle-ingestion.md](references/subtitle-ingestion.md) for repeatable subtitle cleaning and workspace import.
 - Read [references/track-live-chat.md](references/track-live-chat.md) for VTuber, stream, and casual transcript lessons.
-- Read [references/track-article-reading.md](references/track-article-reading.md) for continuous text, arguments, and article-based lessons.
+- Read [references/track-article-reading.md](references/track-article-reading.md) for continuous text, arguments, documentary narration, and article-based lessons.
 - Read [references/state-schema.md](references/state-schema.md) for persistent workspace rules.
 - Read [references/segmentation-policy.md](references/segmentation-policy.md) for material-aware slicing.
 - Read [references/review-policy.md](references/review-policy.md) for summary-first review behavior.
@@ -219,6 +231,8 @@ Output only the current learning delta, not a full permanent profile.
 
 - Do not teach directly from raw subtitle noise when a cleaned lesson text can be prepared first.
 - For transcripts and subtitles, cleaning is mandatory before target extraction and exercise design.
+- Do not infer the track from file extension alone.
+- Documentary, essay-like, or historical narration in subtitle files may still belong to `article_reading`.
 - Do not apply one segmentation strategy to all material types.
 - Do not fragment a livestream or article until the original scene or argument becomes unusable.
 - In persistent mode, do not bypass workspace state reads and writes.

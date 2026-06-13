@@ -17,6 +17,8 @@ That means:
 
 Do not apply one segmentation logic to all material types.
 
+Also do not let file extension decide the segmentation logic by itself.
+
 ## `subtitle_transcript`
 
 Examples:
@@ -24,6 +26,11 @@ Examples:
 - livestream subtitle files
 - VTuber recordings
 - YouTube spoken subtitles
+- documentary subtitle tracks
+
+Choose the segmentation style from the cleaned communicative form and the selected track.
+
+### If the cleaned material behaves like `live_chat`
 
 Segment by:
 
@@ -42,6 +49,25 @@ Do not:
 - split every few lines
 - cut a control/joke/setup/payoff sequence into separate lessons
 - optimize only for short lesson length
+
+### If the cleaned material behaves like `article_reading`
+
+Segment by:
+
+- argument unit
+- paragraph cluster
+- claim/support/qualification boundary
+
+Preserve:
+
+- claim and support in the same lesson when they depend on each other
+- contrast and concession markers with enough surrounding text
+- enough narration to preserve the historical or explanatory thread
+
+Do not:
+
+- split a single argument chain into arbitrary short pieces
+- cut out one paragraph if it depends heavily on the previous one
 
 ## `spoken_transcript`
 
